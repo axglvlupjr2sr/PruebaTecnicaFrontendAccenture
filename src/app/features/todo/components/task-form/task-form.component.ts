@@ -21,12 +21,12 @@ export type { Category, TaskCreatedEvent };
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonButton, IonInput, IonSelect, IonSelectOption],
   template: `
-    <form class="task-form" (ngSubmit)="submitTask()">
+    <div class="task-form" role="form">
       <ion-input
         class="task-form__input"
         [value]="titleValue()"
         (ionInput)="onTitleInput($event)"
-        name="title"
+        (keyup.enter)="submitTask()"
         placeholder="Type a task..."
         [clearInput]="true"
         aria-label="Task title"
@@ -36,7 +36,6 @@ export type { Category, TaskCreatedEvent };
         class="task-form__select"
         [value]="categoryValue()"
         (ionChange)="onCategoryChange($event)"
-        name="category"
         placeholder="Category"
         aria-label="Task category"
         interface="popover"
@@ -50,7 +49,6 @@ export type { Category, TaskCreatedEvent };
         class="task-form__select task-form__select--priority"
         [value]="priorityValue()"
         (ionChange)="onPriorityChange($event)"
-        name="priority"
         placeholder="Priority"
         aria-label="Task priority"
         interface="popover"
@@ -62,14 +60,14 @@ export type { Category, TaskCreatedEvent };
 
       <ion-button
         class="task-form__btn"
-        type="submit"
         fill="solid"
         [disabled]="!canSubmit()"
+        (click)="submitTask()"
         aria-label="Add task"
       >
         Add
       </ion-button>
-    </form>
+    </div>
   `,
   styles: `
     :host {
@@ -87,8 +85,8 @@ export type { Category, TaskCreatedEvent };
     }
 
     .task-form__input {
-      flex: 1;
-      min-width: 0;
+      flex: 1 1 0%;
+      min-width: 180px;
       border: var(--border-light);
       border-radius: var(--radius-sm);
       font-size: var(--font-size-base);
@@ -103,6 +101,7 @@ export type { Category, TaskCreatedEvent };
     }
 
     .task-form__select {
+      flex: 0 1 auto;
       border: var(--border-light);
       border-radius: var(--radius-sm);
       font-size: var(--font-size-sm);
@@ -112,6 +111,7 @@ export type { Category, TaskCreatedEvent };
       --padding-start: var(--space-2);
       --padding-end: var(--space-2);
       min-width: 100px;
+      max-width: 140px;
       transition: border-color var(--transition-fast);
     }
 
@@ -121,6 +121,7 @@ export type { Category, TaskCreatedEvent };
 
     .task-form__select--priority {
       min-width: 90px;
+      max-width: 120px;
     }
 
     .task-form__btn {
@@ -140,6 +141,7 @@ export type { Category, TaskCreatedEvent };
 
       .task-form__input {
         flex-basis: 100%;
+        min-width: 0;
         order: 0;
       }
 
@@ -147,10 +149,12 @@ export type { Category, TaskCreatedEvent };
         flex: 1;
         order: 1;
         min-width: 80px;
+        max-width: none;
       }
 
       .task-form__select--priority {
         min-width: 70px;
+        max-width: none;
       }
 
       .task-form__btn {
@@ -166,6 +170,7 @@ export type { Category, TaskCreatedEvent };
       .task-form__btn {
         width: 100%;
         min-width: 0;
+        max-width: none;
         flex-basis: 100%;
         flex: 1 1 100%;
       }
