@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import {
   IonHeader,
   IonToolbar,
@@ -7,10 +7,10 @@ import {
   IonButtons,
   IonButton,
 } from '@ionic/angular/standalone';
-import { TaskFormComponent, TaskCreatedEvent, Category } from '../../components/task-form/task-form.component';
-import { FilterBarComponent, FilterCategory } from '../../components/filter-bar/filter-bar.component';
+import { TaskFormComponent, TaskCreatedEvent } from '../../components/task-form/task-form.component';
+import { FilterBarComponent } from '../../components/filter-bar/filter-bar.component';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
-import { Task } from '../../components/task-card/task-card.component';
+import { TodoStore } from '../../store/todo.store';
 
 @Component({
   selector: 'app-todo-page',
@@ -41,21 +41,21 @@ import { Task } from '../../components/task-card/task-card.component';
     <ion-content>
       <!-- Task form -->
       <app-task-form
-        [categories]="categories()"
+        [categories]="store.categories()"
         (taskCreated)="onTaskCreated($event)"
       ></app-task-form>
 
       <!-- Filter bar -->
       <app-filter-bar
-        [categories]="categories()"
-        [activeFilter]="activeFilter()"
+        [categories]="store.categories()"
+        [activeFilter]="store.activeFilter()"
         (filterChanged)="onFilterChanged($event)"
       ></app-filter-bar>
 
       <!-- Task list -->
       <app-task-list
-        [tasks]="filteredTasks()"
-        [showPriorityBadge]="showPriorityBadge()"
+        [tasks]="store.filteredTasks()"
+        [showPriorityBadge]="store.showPriorityBadges()"
         (taskToggled)="onTaskToggled($event)"
         (taskDeleted)="onTaskDeleted($event)"
       ></app-task-list>
@@ -75,96 +75,25 @@ import { Task } from '../../components/task-card/task-card.component';
   `,
 })
 export class TodoPageComponent {
-  // Feature flag — will be driven by RemoteConfigService in Phase 3
-  readonly showPriorityBadge = signal(false);
-
-  // Mock categories — will be replaced by CategoryService in Phase 3
-  readonly categories = signal<Category[]>([
-    { id: 'work', label: 'Work' },
-    { id: 'personal', label: 'Personal' },
-    { id: 'shopping', label: 'Shopping' },
-  ]);
-
-  // Active filter
-  readonly activeFilter = signal<string>('all');
-
-  // Mock tasks — will be replaced by TodoStore in Phase 3
-  readonly tasks = signal<Task[]>([
-    {
-      id: '1',
-      title: 'Set up Angular standalone architecture',
-      completed: true,
-      categoryId: 'work',
-      categoryLabel: 'Work',
-      priority: 'high',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: '2',
-      title: 'Implement Notion-style design system',
-      completed: false,
-      categoryId: 'work',
-      categoryLabel: 'Work',
-      priority: 'medium',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-    {
-      id: '3',
-      title: 'Buy groceries',
-      completed: false,
-      categoryId: 'shopping',
-      categoryLabel: 'Shopping',
-      priority: 'low',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    },
-  ]);
-
-  // Derived: filtered tasks based on active filter
-  filteredTasks(): Task[] {
-    const filter = this.activeFilter();
-    if (filter === 'all') {
-      return this.tasks();
-    }
-    return this.tasks().filter(t => t.categoryId === filter);
-  }
+  readonly store = inject(TodoStore);
 
   onTaskCreated(event: TaskCreatedEvent): void {
-    const category = this.categories().find(c => c.id === event.categoryId);
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      title: event.title,
-      completed: false,
-      categoryId: event.categoryId,
-      categoryLabel: category?.label,
-      priority: event.priority,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    };
-    this.tasks.update(tasks => [...tasks, newTask]);
+    this.store.addTask(event.title, event.categoryId, event.priority);
   }
 
   onFilterChanged(filterId: string): void {
-    this.activeFilter.set(filterId);
+    this.store.setFilter(filterId);
   }
 
   onTaskToggled(taskId: string): void {
-    this.tasks.update(tasks =>
-      tasks.map(t =>
-        t.id === taskId
-          ? { ...t, completed: !t.completed, updatedAt: new Date().toISOString() }
-          : t
-      )
-    );
+    this.store.toggleTask(taskId);
   }
 
   onTaskDeleted(taskId: string): void {
-    this.tasks.update(tasks => tasks.filter(t => t.id !== taskId));
+    this.store.deleteTask(taskId);
   }
 
   clearCompleted(): void {
-    this.tasks.update(tasks => tasks.filter(t => !t.completed));
+    this.store.clearCompleted();
   }
 }

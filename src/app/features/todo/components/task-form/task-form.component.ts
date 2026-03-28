@@ -3,7 +3,6 @@ import {
   Component,
   input,
   output,
-  signal,
 } from '@angular/core';
 import {
   IonButton,
@@ -12,17 +11,9 @@ import {
   IonSelectOption,
 } from '@ionic/angular/standalone';
 import { FormsModule } from '@angular/forms';
+import { Category, TaskCreatedEvent } from '../../../../core/models/task.model';
 
-export interface Category {
-  id: string;
-  label: string;
-}
-
-export interface TaskCreatedEvent {
-  title: string;
-  categoryId: string;
-  priority?: 'low' | 'medium' | 'high';
-}
+export type { Category, TaskCreatedEvent };
 
 @Component({
   selector: 'app-task-form',

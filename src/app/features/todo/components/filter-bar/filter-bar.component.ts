@@ -1,9 +1,8 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { Category } from '../../../../core/models/task.model';
 
-export interface FilterCategory {
-  id: string;
-  label: string;
-}
+export type FilterCategory = Category;
+export type { Category };
 
 @Component({
   selector: 'app-filter-bar',

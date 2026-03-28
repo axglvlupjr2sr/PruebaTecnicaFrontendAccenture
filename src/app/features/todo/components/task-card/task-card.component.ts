@@ -2,17 +2,9 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 import { IonCheckbox, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
+import { Task } from '../../../../core/models/task.model';
 
-export interface Task {
-  id: string;
-  title: string;
-  completed: boolean;
-  categoryId: string;
-  categoryLabel?: string;
-  priority?: 'low' | 'medium' | 'high';
-  createdAt: string;
-  updatedAt: string;
-}
+export type { Task };
 
 @Component({
   selector: 'app-task-card',
