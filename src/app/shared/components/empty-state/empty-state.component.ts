@@ -8,8 +8,10 @@ import { checkboxOutline } from 'ionicons/icons';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonIcon],
   template: `
-    <div class="empty-state">
-      <ion-icon name="checkbox-outline" class="empty-state__icon"></ion-icon>
+    <div class="empty-state" role="status" aria-live="polite">
+      <div class="empty-state__icon-wrap" aria-hidden="true">
+        <ion-icon name="checkbox-outline" class="empty-state__icon"></ion-icon>
+      </div>
       <p class="empty-state__message">{{ message() }}</p>
     </div>
   `,
@@ -23,12 +25,23 @@ import { checkboxOutline } from 'ionicons/icons';
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: var(--space-12) var(--space-4);
-      gap: var(--space-3);
+      padding: var(--space-12) var(--space-4) var(--space-8);
+      gap: var(--space-2);
+    }
+
+    .empty-state__icon-wrap {
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border-light);
+      border-radius: var(--radius-sm);
+      margin-bottom: var(--space-2);
     }
 
     .empty-state__icon {
-      font-size: 2rem;
+      font-size: 1.25rem;
       color: var(--color-text-placeholder);
     }
 
@@ -37,6 +50,7 @@ import { checkboxOutline } from 'ionicons/icons';
       font-size: var(--font-size-sm);
       color: var(--color-text-secondary);
       text-align: center;
+      line-height: 1.5;
     }
   `,
 })

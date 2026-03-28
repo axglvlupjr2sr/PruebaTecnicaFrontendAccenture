@@ -13,13 +13,19 @@
 @import "@ionic/angular/css/typography.css";
 @import "@ionic/angular/css/display.css";
 
-/* Import Inter font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+/* Import fonts: Inter for body + DM Serif Display for headings */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
 
 /* === Notion-style Global Resets === */
 * {
   box-shadow: none !important;
   --box-shadow: none !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
 body {
@@ -28,6 +34,7 @@ body {
   background: var(--color-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
 }
 
 /* Remove Ionic default shadows and rounded corners */
@@ -42,6 +49,11 @@ ion-item {
   --border-width: 0;
   --background-hover: var(--color-bg-hover);
   --background-activated: var(--color-bg-active);
+}
+
+/* Minimal app shell — no header bar by default */
+ion-app {
+  background: var(--color-bg);
 }
 
 ion-button {
@@ -65,56 +77,67 @@ ion-button.button-outline {
   --border-width: var(--border-width);
 }
 
+/* Form controls — clean borders */
 ion-input,
 ion-textarea,
 ion-select {
   --border-radius: var(--radius-sm);
   --padding-start: var(--space-3);
   --padding-end: var(--space-3);
-  border: var(--border);
+  --placeholder-color: var(--color-text-placeholder);
   font-family: var(--font-family);
+  font-size: var(--font-size-sm);
 }
 
+/* Borders are managed per-component for Notion feel */
 ion-toolbar {
-  --border-width: 0 0 1.5px 0;
-  --border-color: var(--color-border);
+  --border-width: 0 0 1px 0;
+  --border-color: var(--color-border-light);
   --border-style: solid;
+  --min-height: 52px;
 }
 
 ion-content {
-  --padding-start: var(--space-4);
-  --padding-end: var(--space-4);
-  --padding-top: var(--space-4);
-  --padding-bottom: var(--space-4);
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+  --background: var(--color-bg);
 }
 
 /* Notion-style checkbox */
 ion-checkbox {
-  --border-color: var(--color-border);
-  --border-width: var(--border-width);
+  --border-color: var(--color-border-light);
+  --border-color-checked: var(--color-accent);
+  --border-width: 1.5px;
   --border-radius: var(--radius-sm);
   --checkbox-background: var(--color-bg);
   --checkbox-background-checked: var(--color-accent);
   --checkmark-color: var(--color-bg);
-  --size: 18px;
+  --checkmark-width: 2px;
+  --size: 17px;
 }
 
 /* Notion-style chip/badge */
 .notion-badge {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-1) var(--space-2);
-  border: var(--border);
+  padding: 2px var(--space-2);
+  border: 1px solid var(--color-border-light);
   border-radius: var(--radius-sm);
-  font-size: var(--font-size-xs);
+  font-size: 0.7rem;
   font-weight: var(--font-weight-medium);
-  line-height: 1;
+  line-height: 1.4;
   background: var(--color-bg);
-  color: var(--color-text);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  letter-spacing: 0.01em;
 }
 
 /* Completed task style */
 .task-completed {
   text-decoration: line-through;
-  color: var(--color-text-secondary);
+  color: var(--color-text-placeholder);
+  opacity: 0.8;
 }
+

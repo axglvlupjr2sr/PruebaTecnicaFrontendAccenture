@@ -1,8 +1,10 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   output,
+  signal,
 } from '@angular/core';
 import {
   IonButton,
@@ -10,29 +12,30 @@ import {
   IonSelect,
   IonSelectOption,
 } from '@ionic/angular/standalone';
-import { FormsModule } from '@angular/forms';
-import { Category, TaskCreatedEvent } from '../../../../core/models/task.model';
+import { Category, TaskCreatedEvent, TaskPriority } from '../../../../core/models/task.model';
 
 export type { Category, TaskCreatedEvent };
 
 @Component({
   selector: 'app-task-form',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [IonButton, IonInput, IonSelect, IonSelectOption, FormsModule],
+  imports: [IonButton, IonInput, IonSelect, IonSelectOption],
   template: `
     <form class="task-form" (ngSubmit)="submitTask()">
       <ion-input
         class="task-form__input"
-        [(ngModel)]="titleValue"
+        [value]="titleValue()"
+        (ionInput)="titleValue.set($any($event.target).value ?? '')"
         name="title"
-        placeholder="New task..."
+        placeholder="Type a task..."
         [clearInput]="true"
         aria-label="Task title"
       ></ion-input>
 
       <ion-select
         class="task-form__select"
-        [(ngModel)]="categoryValue"
+        [value]="categoryValue()"
+        (ionChange)="categoryValue.set($any($event.detail).value ?? '')"
         name="category"
         placeholder="Category"
         aria-label="Task category"
@@ -45,7 +48,8 @@ export type { Category, TaskCreatedEvent };
 
       <ion-select
         class="task-form__select task-form__select--priority"
-        [(ngModel)]="priorityValue"
+        [value]="priorityValue()"
+        (ionChange)="priorityValue.set($any($event.detail).value ?? '')"
         name="priority"
         placeholder="Priority"
         aria-label="Task priority"
@@ -77,29 +81,42 @@ export type { Category, TaskCreatedEvent };
       flex-direction: row;
       align-items: center;
       gap: var(--space-2);
-      padding: var(--space-3) 0;
-      border-bottom: var(--border);
+      padding: var(--space-4) 0;
+      border-bottom: var(--border-light);
+      margin-bottom: var(--space-2);
     }
 
     .task-form__input {
       flex: 1;
       min-width: 0;
-      border: var(--border);
+      border: var(--border-light);
       border-radius: var(--radius-sm);
-      font-size: var(--font-size-sm);
+      font-size: var(--font-size-base);
+      --placeholder-color: var(--color-text-placeholder);
       --padding-top: var(--space-2);
       --padding-bottom: var(--space-2);
+      transition: border-color var(--transition-fast);
+    }
+
+    .task-form__input:focus-within {
+      border-color: var(--color-border);
     }
 
     .task-form__select {
-      border: var(--border);
+      border: var(--border-light);
       border-radius: var(--radius-sm);
       font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
       --padding-top: var(--space-2);
       --padding-bottom: var(--space-2);
-      --padding-start: var(--space-3);
-      --padding-end: var(--space-3);
+      --padding-start: var(--space-2);
+      --padding-end: var(--space-2);
       min-width: 100px;
+      transition: border-color var(--transition-fast);
+    }
+
+    .task-form__select:focus-within {
+      border-color: var(--color-border);
     }
 
     .task-form__select--priority {
@@ -110,8 +127,10 @@ export type { Category, TaskCreatedEvent };
       flex-shrink: 0;
       --padding-start: var(--space-4);
       --padding-end: var(--space-4);
-      height: 36px;
+      height: 34px;
       font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      letter-spacing: 0;
     }
 
     @media (max-width: 480px) {
@@ -121,10 +140,17 @@ export type { Category, TaskCreatedEvent };
 
       .task-form__input {
         flex-basis: 100%;
+        order: 0;
       }
 
       .task-form__select {
         flex: 1;
+        order: 1;
+      }
+
+      .task-form__btn {
+        order: 2;
+        width: 100%;
       }
     }
   `,
@@ -133,13 +159,14 @@ export class TaskFormComponent {
   categories = input<Category[]>([]);
   taskCreated = output<TaskCreatedEvent>();
 
-  titleValue = '';
-  categoryValue = '';
-  priorityValue: 'low' | 'medium' | 'high' | '' = '';
+  // Signal-based form state — works correctly with OnPush
+  readonly titleValue = signal('');
+  readonly categoryValue = signal('');
+  readonly priorityValue = signal<TaskPriority | ''>('');
 
-  canSubmit(): boolean {
-    return this.titleValue.trim().length > 0 && this.categoryValue.length > 0;
-  }
+  readonly canSubmit = computed(
+    () => this.titleValue().trim().length > 0 && this.categoryValue().length > 0
+  );
 
   submitTask(): void {
     if (!this.canSubmit()) {
@@ -147,19 +174,20 @@ export class TaskFormComponent {
     }
 
     const event: TaskCreatedEvent = {
-      title: this.titleValue.trim(),
-      categoryId: this.categoryValue,
+      title: this.titleValue().trim(),
+      categoryId: this.categoryValue(),
     };
 
-    if (this.priorityValue) {
-      event.priority = this.priorityValue;
+    const pv = this.priorityValue();
+    if (pv) {
+      event.priority = pv;
     }
 
     this.taskCreated.emit(event);
 
     // Reset form
-    this.titleValue = '';
-    this.categoryValue = '';
-    this.priorityValue = '';
+    this.titleValue.set('');
+    this.categoryValue.set('');
+    this.priorityValue.set('');
   }
 }

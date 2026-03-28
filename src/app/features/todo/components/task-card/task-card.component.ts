@@ -10,6 +10,7 @@ export type { Task };
   selector: 'app-task-card',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [IonCheckbox, IonIcon],
+  styleUrl: 'task-card.component.scss',
   template: `
     <div class="task-card">
       <!-- Left: Checkbox -->
@@ -59,111 +60,6 @@ export type { Task };
         </button>
       </div>
     </div>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-
-    .task-card {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: var(--space-3);
-      padding: var(--space-3) var(--space-2);
-      border-bottom: var(--border-light);
-      background: var(--color-bg);
-      transition: background var(--transition-fast);
-    }
-
-    .task-card:hover {
-      background: var(--color-bg-hover);
-    }
-
-    .task-card__checkbox {
-      flex-shrink: 0;
-    }
-
-    .task-card__content {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: var(--space-1);
-    }
-
-    .task-card__title {
-      font-size: var(--font-size-base);
-      font-weight: var(--font-weight-normal);
-      color: var(--color-text);
-      line-height: 1.4;
-      word-break: break-word;
-      transition: color var(--transition-fast), text-decoration var(--transition-fast);
-    }
-
-    .task-card__category {
-      align-self: flex-start;
-      color: var(--color-text-secondary);
-      border-color: var(--color-border-light);
-    }
-
-    .task-card__actions {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: var(--space-2);
-      flex-shrink: 0;
-    }
-
-    .task-card__priority {
-      font-size: var(--font-size-xs);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-    }
-
-    .task-card__priority--high {
-      color: var(--color-badge-high);
-      border-color: var(--color-badge-high);
-    }
-
-    .task-card__priority--medium {
-      color: var(--color-badge-medium);
-      border-color: var(--color-badge-medium);
-    }
-
-    .task-card__priority--low {
-      color: var(--color-badge-low);
-      border-color: var(--color-badge-low);
-    }
-
-    .task-card__delete {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      color: var(--color-text-secondary);
-      border-radius: var(--radius-sm);
-      transition: color var(--transition-fast), background var(--transition-fast);
-      padding: 0;
-    }
-
-    .task-card__delete:hover {
-      color: var(--color-text);
-      background: var(--color-bg-active);
-    }
-
-    .task-card__delete:focus-visible {
-      outline: 2px solid var(--color-border);
-      outline-offset: 2px;
-    }
-
-    .task-card__delete ion-icon {
-      font-size: 1rem;
-    }
   `,
 })
 export class TaskCardComponent {
