@@ -2,14 +2,14 @@ import { Injectable, inject, isDevMode, signal } from '@angular/core';
 import {
   RemoteConfig,
   fetchAndActivate,
-  getBoolean,
+  getValue,
 } from '@angular/fire/remote-config';
 
 const FLAG_SHOW_PRIORITY_BADGES = 'todo_show_priority_badges';
 
 @Injectable({ providedIn: 'root' })
 export class RemoteConfigService {
-  private readonly _showPriorityBadges = signal(false);
+  private readonly _showPriorityBadges = signal(true);
 
   readonly showPriorityBadges = this._showPriorityBadges.asReadonly();
 
@@ -38,10 +38,15 @@ export class RemoteConfigService {
 
       await fetchAndActivate(this.remoteConfig);
 
-      const showBadges = getBoolean(this.remoteConfig, FLAG_SHOW_PRIORITY_BADGES);
-      this._showPriorityBadges.set(showBadges);
+      // Only override default if the flag was explicitly set in Remote Config.
+      // getValue().getSource() returns 'remote' when the key exists on the server,
+      // 'default' for local defaults, and 'static' when not configured at all.
+      const value = getValue(this.remoteConfig, FLAG_SHOW_PRIORITY_BADGES);
+      if (value.getSource() === 'remote') {
+        this._showPriorityBadges.set(value.asBoolean());
+      }
     } catch {
-      // Firebase unreachable or any error — keep default (false)
+      // Firebase unreachable or any error — keep default (true)
       // App MUST continue working normally
     }
   }

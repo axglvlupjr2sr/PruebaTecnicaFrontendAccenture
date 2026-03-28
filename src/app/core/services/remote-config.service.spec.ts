@@ -22,8 +22,8 @@ describe('RemoteConfigService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should default showPriorityBadges to false', () => {
-    expect(service.showPriorityBadges()).toBeFalse();
+  it('should default showPriorityBadges to true', () => {
+    expect(service.showPriorityBadges()).toBeTrue();
   });
 
   it('should not crash when Firebase is unavailable', async () => {
@@ -31,8 +31,8 @@ describe('RemoteConfigService', () => {
     await expectAsync(service.init()).toBeResolved();
   });
 
-  it('should keep showPriorityBadges false when Firebase is unavailable', async () => {
+  it('should keep showPriorityBadges true when Firebase is unavailable', async () => {
     await service.init();
-    expect(service.showPriorityBadges()).toBeFalse();
+    expect(service.showPriorityBadges()).toBeTrue();
   });
 });
