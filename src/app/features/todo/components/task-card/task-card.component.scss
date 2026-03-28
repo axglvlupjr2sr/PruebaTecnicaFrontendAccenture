@@ -58,7 +58,7 @@
   flex-shrink: 0;
   color: var(--color-text-secondary);
   border-color: var(--color-border-light);
-  font-size: 0.7rem;
+  font-size: 0.75rem;
   padding: 1px var(--space-2);
 }
 
@@ -97,8 +97,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  min-width: 44px;
+  min-height: 44px;
+  width: 44px;
+  height: 44px;
   background: none;
   border: none;
   cursor: pointer;
@@ -122,4 +124,12 @@
 
 .task-card__delete ion-icon {
   font-size: 0.875rem;
+}
+
+/* Touch devices — delete button always visible (no hover available) */
+@media (hover: none) {
+  .task-card__delete {
+    opacity: 1;
+    pointer-events: auto;
+  }
 }

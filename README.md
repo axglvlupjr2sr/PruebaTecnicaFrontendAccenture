@@ -230,49 +230,94 @@ Si Firebase es inalcanzable (sin conexión, error de red), `RemoteConfigService`
 
 ## 📱 Build Nativo
 
-### Prerrequisitos para Build Nativo
+> **Nota**: El desarrollo web (`ionic serve`) funciona en cualquier sistema operativo. Los builds nativos requieren SDKs específicos de plataforma.
 
-**Android:**
-- Android SDK (via Android Studio)
-- Java JDK 17+
-- `ANDROID_HOME` configurado en el PATH
+### Prerrequisitos
 
-**iOS:**
+**Para desarrollo web (sin build nativo):**
+- Node 20 LTS (via nvm)
+- npm 10+
+- Ionic CLI: `npm install -g @ionic/cli`
+
+**Para Android (APK):**
+- Todo lo anterior +
+- Android Studio con Android SDK (API level 34 recomendado)
+- Java JDK 17+ (OpenJDK recomendado)
+- Gradle 8+ (incluido con Android Studio)
+- Variables de entorno configuradas:
+  ```bash
+  export ANDROID_HOME=$HOME/Android/Sdk
+  export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  ```
+
+**Para iOS (IPA):**
+- Todo lo anterior +
 - macOS con Xcode 15+
 - Apple Developer Account
-- CocoaPods instalado
-
-### Android (APK)
-
-```bash
-# Build de producción
-ionic cordova build android --prod --release
-
-# Output
-platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
-```
-
-> Para firmar el APK: `jarsigner` + `zipalign` con tu keystore de producción.
-
-### iOS (IPA)
-
-```bash
-# Build de producción (solo macOS)
-ionic cordova build ios --prod --release
-
-# Output
-platforms/ios/build/device/TodoApp.ipa
-```
-
-> Requiere un provisioning profile válido configurado en Xcode.
+- CocoaPods: `sudo gem install cocoapods`
+- Un provisioning profile válido configurado en Xcode
 
 ### Agregar plataformas (primera vez)
 
 ```bash
-nvm use 20   # Obligatorio — Cordova no soporta Node 24
+nvm use 20   # Obligatorio — Cordova no soporta Node 24+
 ionic cordova platform add android
 ionic cordova platform add ios     # Solo en macOS
 ```
+
+### Android (APK)
+
+**Opción 1 — Ionic CLI (recomendado):**
+```bash
+nvm use 20
+ionic cordova build android --prod --release
+# Output: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+```
+
+**Opción 2 — Build manual (workaround si Ionic CLI da error):**
+```bash
+nvm use 20
+# Paso 1: Build web de producción
+npx ng build --configuration=production
+# Paso 2: Copiar assets web a la plataforma
+npx cordova prepare android
+# Paso 3: Compilar APK
+npx cordova compile android --release
+# Output: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+```
+
+**Firmar el APK para distribución:**
+```bash
+# Generar keystore (una sola vez)
+keytool -genkey -v -keystore todo-app-release.keystore -alias todoapp -keyalg RSA -keysize 2048 -validity 10000
+
+# Firmar
+jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
+  -keystore todo-app-release.keystore \
+  platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk todoapp
+
+# Zipalign (optimizar)
+zipalign -v 4 app-release-unsigned.apk TodoApp.apk
+```
+
+### iOS (IPA) — solo macOS
+
+```bash
+nvm use 20
+ionic cordova build ios --prod --release
+# Output: platforms/ios/build/device/TodoApp.ipa
+```
+
+> Requiere un provisioning profile válido y firma de código configurados en Xcode.
+
+### ⚠️ Troubleshooting
+
+| Problema | Causa | Solución |
+|----------|-------|----------|
+| `Unknown argument: platform` | Incompatibilidad Ionic CLI 7.x con Angular 20 builders | Usar build manual (Opción 2) |
+| `ERR_OSSL_EVP_UNSUPPORTED` | Node 24+ no compatible con Cordova | `nvm use 20` |
+| `ANDROID_HOME is not set` | Android SDK no configurado | Instalar Android Studio y configurar variables |
+| Build iOS falla en Linux/Windows | iOS requiere macOS + Xcode | Solo se puede compilar en macOS |
 
 ---
 

@@ -149,7 +149,7 @@ import { TodoStore } from '../../store/todo.store';
     }
 
     /* Responsive adjustments */
-    @media (max-width: 720px) {
+    @media (max-width: 768px) {
       .notion-page {
         padding: var(--space-6) var(--space-4) var(--space-8);
       }

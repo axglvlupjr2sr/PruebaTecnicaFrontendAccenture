@@ -127,7 +127,7 @@ export type { Category, TaskCreatedEvent };
       flex-shrink: 0;
       --padding-start: var(--space-4);
       --padding-end: var(--space-4);
-      height: 34px;
+      min-height: 44px;
       font-size: var(--font-size-sm);
       font-weight: var(--font-weight-medium);
       letter-spacing: 0;
@@ -146,11 +146,28 @@ export type { Category, TaskCreatedEvent };
       .task-form__select {
         flex: 1;
         order: 1;
+        min-width: 80px;
+      }
+
+      .task-form__select--priority {
+        min-width: 70px;
       }
 
       .task-form__btn {
         order: 2;
         width: 100%;
+      }
+    }
+
+    @media (max-width: 360px) {
+      .task-form__input,
+      .task-form__select,
+      .task-form__select--priority,
+      .task-form__btn {
+        width: 100%;
+        min-width: 0;
+        flex-basis: 100%;
+        flex: 1 1 100%;
       }
     }
   `,

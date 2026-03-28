@@ -292,46 +292,150 @@ interface StorageSchema {
 
 ## 4. Guía de Build Nativo
 
-### Flujo completo para Android
+> **Importante**: El desarrollo web (`ionic serve`) funciona en cualquier sistema operativo. Los builds nativos requieren SDKs específicos de plataforma y solo se pueden ejecutar en el entorno correcto.
+
+### 4.0 Prerrequisitos por plataforma
+
+**Para desarrollo web (sin build nativo):**
+- Node 20 LTS (via nvm) — Node 24+ no es compatible con Cordova
+- npm 10+
+- Ionic CLI: `npm install -g @ionic/cli`
+
+**Para Android (APK):**
+- Todo lo anterior +
+- Android Studio con Android SDK (API level 34 recomendado)
+- Java JDK 17+ (OpenJDK recomendado)
+- Gradle 8+ (incluido con Android Studio)
+- Variables de entorno configuradas:
+  ```bash
+  export ANDROID_HOME=$HOME/Android/Sdk
+  export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+  ```
+
+**Para iOS (IPA):**
+- Todo lo anterior +
+- macOS con Xcode 15+
+- Apple Developer Account
+- CocoaPods: `sudo gem install cocoapods`
+- Un provisioning profile válido configurado en Xcode
+
+---
+
+### 4.1 Known Issue: Ionic CLI + Angular 20 Builders
+
+**Síntoma**: Al ejecutar `ionic cordova build android --prod` con Ionic CLI 7.2.1 y Angular CLI 21.2.5 se produce el error:
+
+```
+[ERROR] Unknown argument: platform
+```
+
+**Cuándo ocurre**: Ionic CLI 7.2.1 + Angular CLI 21.2.5 + `@ionic/angular-toolkit` sobre Angular 20.
+
+**Por qué ocurre**: `@ionic/angular-toolkit` pasa el argumento `--platform` al builder de Angular durante la fase de compilación web (`ng build`). Angular 20 cambió la interfaz de sus builders y ya no acepta ese argumento desconocido, fallando antes de invocar a Cordova.
+
+**Workaround — Build manual en 3 pasos**: Separar el proceso en fases independientes, sin pasar por el builder de Ionic:
+
+```bash
+nvm use 20
+# Paso 1: Build web de producción (Angular puro, sin intermediario de Ionic)
+npx ng build --configuration=production
+# Paso 2: Copiar assets web compilados a la plataforma nativa
+npx cordova prepare android
+# Paso 3: Compilar el APK
+npx cordova compile android --release
+```
+
+**Estado**: Pendiente de fix por parte del equipo de Ionic. Registrado en el issue tracker de Ionic CLI. El workaround de build manual es 100% funcional y produce el mismo artefacto final.
+
+---
+
+### 4.2 Agregar plataformas (primera vez)
+
+```bash
+nvm use 20   # Obligatorio — Cordova no soporta Node 24+
+ionic cordova platform add android
+ionic cordova platform add ios     # Solo en macOS
+```
+
+---
+
+### 4.3 Flujo completo para Android
+
+**Opción 1 — Ionic CLI (recomendado si no hay error de builder):**
 
 ```bash
 # 1. Asegurar Node 20 (obligatorio)
 nvm use 20
 
-# 2. Build web optimizado
-npx ng build --configuration=production
-
-# 3. Build APK debug (para testing)
+# 2. Build APK debug (para testing)
 ionic cordova build android
 
-# 4. Build APK release
+# 3. Build APK release
 ionic cordova build android --prod --release
 
 # Output: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+```
 
-# 5. Firmar el APK (requiere keystore)
+**Opción 2 — Build manual (workaround para `Unknown argument: platform`):**
+
+```bash
+# 1. Asegurar Node 20 (obligatorio)
+nvm use 20
+
+# 2. Build web de producción (Angular CLI directo)
+npx ng build --configuration=production
+
+# 3. Copiar assets web compilados a la plataforma
+npx cordova prepare android
+
+# 4. Compilar APK release
+npx cordova compile android --release
+
+# Output: platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk
+```
+
+**Firmar el APK para distribución:**
+
+```bash
+# Generar keystore (una sola vez)
+keytool -genkey -v -keystore todo-app-release.keystore -alias todoapp -keyalg RSA -keysize 2048 -validity 10000
+
+# Firmar
 jarsigner -verbose -sigalg SHA256withRSA -digestalg SHA-256 \
-  -keystore my-release-key.keystore \
-  app-release-unsigned.apk alias_name
+  -keystore todo-app-release.keystore \
+  platforms/android/app/build/outputs/apk/release/app-release-unsigned.apk todoapp
 
-# 6. Zipalign
+# Zipalign (optimizar para distribución)
 zipalign -v 4 app-release-unsigned.apk TodoApp.apk
 ```
 
-### Flujo completo para iOS (solo macOS)
+---
+
+### 4.4 Flujo completo para iOS (solo macOS)
 
 ```bash
 # 1. Asegurar Node 20
 nvm use 20
 
-# 2. Build web optimizado
-npx ng build --configuration=production
-
-# 3. Build IPA release
+# 2. Build IPA release
 ionic cordova build ios --prod --release
 
 # Output: platforms/ios/build/device/TodoApp.ipa
 ```
+
+> Requiere un provisioning profile válido y firma de código configurados en Xcode. No es posible compilar para iOS en Linux ni Windows.
+
+---
+
+### 4.5 Troubleshooting rápido
+
+| Problema | Causa | Solución |
+|----------|-------|----------|
+| `Unknown argument: platform` | Incompatibilidad Ionic CLI 7.x con Angular 20 builders | Usar build manual (sección 4.3 Opción 2) |
+| `ERR_OSSL_EVP_UNSUPPORTED` | Node 24+ no compatible con Cordova | `nvm use 20` |
+| `ANDROID_HOME is not set` | Android SDK no configurado | Instalar Android Studio y configurar variables de entorno |
+| Build iOS falla en Linux/Windows | iOS requiere macOS + Xcode | Solo se puede compilar en macOS |
+| `Gradle build failed` | Versión de JDK incompatible | Verificar JDK 17+: `java -version` |
 
 ---
 

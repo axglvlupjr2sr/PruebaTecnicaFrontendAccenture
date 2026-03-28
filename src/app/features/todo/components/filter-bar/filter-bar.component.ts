@@ -56,6 +56,7 @@ export type { Category };
       display: inline-flex;
       align-items: center;
       padding: var(--space-2) var(--space-3);
+      min-height: 44px;
       background: none;
       border: none;
       border-bottom: 2px solid transparent;
