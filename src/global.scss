@@ -67,8 +67,8 @@ ion-button {
 ion-button.button-solid {
   --background: var(--color-accent);
   --color: var(--color-bg);
-  --background-hover: #333333;
-  --background-activated: #000000;
+  --background-hover: var(--color-text-secondary);
+  --background-activated: var(--color-accent);
 }
 
 ion-button.button-outline {

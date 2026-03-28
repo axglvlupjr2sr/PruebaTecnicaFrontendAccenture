@@ -71,13 +71,23 @@ protected readonly category = signal<string>('personal');
 
 ```typescript
 async init(): Promise<void> {
+  if (!this.remoteConfig) {
+    return;
+  }
+
   try {
+    this.remoteConfig.settings = {
+      ...this.remoteConfig.settings,
+      minimumFetchIntervalMillis: isDevMode() ? 0 : 3600_000,
+    };
+
     await fetchAndActivate(this.remoteConfig);
-    const value = getBoolean(this.remoteConfig, 'todo_show_priority_badges');
+
+    const value = getBoolean(this.remoteConfig, FLAG_SHOW_PRIORITY_BADGES);
     this._showPriorityBadges.set(value);
   } catch {
-    // Falla silenciosa — default false ya está inicializado
-    console.warn('RemoteConfig: usando valores por defecto (offline)');
+    // Firebase unreachable or any error — keep default (false)
+    // App MUST continue working normally
   }
 }
 ```

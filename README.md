@@ -293,7 +293,7 @@ ionic cordova platform add ios     # Solo en macOS
 
 ## 👤 Autor
 
-**[Tu nombre aquí]**
+**Abiezer Guerra**
 
 - GitHub: [@axglvlupjr2sr](https://github.com/axglvlupjr2sr)
 - Repositorio: [PruebaTecnicaFrontendAccenture](https://github.com/axglvlupjr2sr/PruebaTecnicaFrontendAccenture)

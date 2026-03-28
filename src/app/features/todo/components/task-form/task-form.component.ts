@@ -25,7 +25,7 @@ export type { Category, TaskCreatedEvent };
       <ion-input
         class="task-form__input"
         [value]="titleValue()"
-        (ionInput)="titleValue.set($any($event.target).value ?? '')"
+        (ionInput)="onTitleInput($event)"
         name="title"
         placeholder="Type a task..."
         [clearInput]="true"
@@ -35,7 +35,7 @@ export type { Category, TaskCreatedEvent };
       <ion-select
         class="task-form__select"
         [value]="categoryValue()"
-        (ionChange)="categoryValue.set($any($event.detail).value ?? '')"
+        (ionChange)="onCategoryChange($event)"
         name="category"
         placeholder="Category"
         aria-label="Task category"
@@ -49,7 +49,7 @@ export type { Category, TaskCreatedEvent };
       <ion-select
         class="task-form__select task-form__select--priority"
         [value]="priorityValue()"
-        (ionChange)="priorityValue.set($any($event.detail).value ?? '')"
+        (ionChange)="onPriorityChange($event)"
         name="priority"
         placeholder="Priority"
         aria-label="Task priority"
@@ -167,6 +167,21 @@ export class TaskFormComponent {
   readonly canSubmit = computed(
     () => this.titleValue().trim().length > 0 && this.categoryValue().length > 0
   );
+
+  onTitleInput(event: Event): void {
+    const value = (event as CustomEvent<{ value: string }>).detail.value ?? '';
+    this.titleValue.set(value);
+  }
+
+  onCategoryChange(event: Event): void {
+    const value = (event as CustomEvent<{ value: string }>).detail.value ?? '';
+    this.categoryValue.set(value);
+  }
+
+  onPriorityChange(event: Event): void {
+    const value = ((event as CustomEvent<{ value: string }>).detail.value ?? '') as TaskPriority | '';
+    this.priorityValue.set(value);
+  }
 
   submitTask(): void {
     if (!this.canSubmit()) {
