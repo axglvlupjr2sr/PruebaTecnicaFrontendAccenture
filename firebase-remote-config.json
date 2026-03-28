@@ -1,0 +1,10 @@
+{
+  "parameters": {
+    "todo_show_priority_badges": {
+      "defaultValue": {
+        "value": "false"
+      },
+      "description": "Show priority badges on task cards"
+    }
+  }
+}
