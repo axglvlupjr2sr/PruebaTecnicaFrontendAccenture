@@ -91,6 +91,8 @@ export type { Category, TaskCreatedEvent };
       border-radius: var(--radius-sm);
       font-size: var(--font-size-base);
       --placeholder-color: var(--color-text-placeholder);
+      --padding-start: var(--space-3);
+      --padding-end: var(--space-3);
       --padding-top: var(--space-2);
       --padding-bottom: var(--space-2);
       transition: border-color var(--transition-fast);

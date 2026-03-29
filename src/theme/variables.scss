@@ -71,3 +71,35 @@
   --ion-color-primary-tint: #333333;
 }
 
+/* Dark mode — activated by class .dark on document.body */
+body.dark {
+  /* Notion B&W Palette — dark */
+  --color-bg: #191919;
+  --color-bg-hover: #252525;
+  --color-bg-active: #2f2f2f;
+  --color-text: #f7f7f5;
+  --color-text-secondary: #9b9b9b;
+  --color-text-placeholder: #555555;
+  --color-border: #f7f7f5;
+  --color-border-light: #373737;
+  --color-accent: #f7f7f5;
+  --color-badge-high: #f7f7f5;
+  --color-badge-medium: #9b9b9b;
+  --color-badge-low: #555555;
+
+  /* Ionic overrides */
+  --ion-background-color: #191919;
+  --ion-text-color: #f7f7f5;
+  --ion-toolbar-background: #191919;
+  --ion-toolbar-color: #f7f7f5;
+  --ion-item-background: #191919;
+  --ion-item-color: #f7f7f5;
+  --ion-card-background: #252525;
+  --ion-color-primary: #f7f7f5;
+  --ion-color-primary-rgb: 247, 247, 245;
+  --ion-color-primary-contrast: #191919;
+  --ion-color-primary-contrast-rgb: 25, 25, 25;
+  --ion-color-primary-shade: #dddddb;
+  --ion-color-primary-tint: #ffffff;
+}
+

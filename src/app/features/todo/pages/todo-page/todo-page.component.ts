@@ -1,17 +1,24 @@
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import {
   IonContent,
+  IonButton,
+  IonIcon,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import { sunnyOutline, moonOutline } from 'ionicons/icons';
 import { TaskFormComponent, TaskCreatedEvent } from '../../components/task-form/task-form.component';
 import { FilterBarComponent } from '../../components/filter-bar/filter-bar.component';
 import { TaskListComponent } from '../../components/task-list/task-list.component';
 import { TodoStore } from '../../store/todo.store';
+import { ThemeService } from '../../../../core/services/theme.service';
 
 @Component({
   selector: 'app-todo-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     IonContent,
+    IonButton,
+    IonIcon,
     TaskFormComponent,
     FilterBarComponent,
     TaskListComponent,
@@ -36,6 +43,15 @@ import { TodoStore } from '../../store/todo.store';
                 Clear done
               </button>
             }
+            <button
+              class="notion-page__theme-btn"
+              (click)="themeService.toggle()"
+              [attr.aria-label]="themeService.theme() === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'"
+            >
+              <ion-icon
+                [name]="themeService.theme() === 'dark' ? 'sunny-outline' : 'moon-outline'"
+              ></ion-icon>
+            </button>
           </div>
         </header>
 
@@ -141,6 +157,31 @@ import { TodoStore } from '../../store/todo.store';
       border-radius: var(--radius-sm);
     }
 
+    .notion-page__theme-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      padding: var(--space-1);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      font-size: 1.125rem;
+      transition: color var(--transition-fast);
+      line-height: 1;
+      margin-left: auto;
+    }
+
+    .notion-page__theme-btn:hover {
+      color: var(--color-text);
+    }
+
+    .notion-page__theme-btn:focus-visible {
+      outline: 2px solid var(--color-border);
+      outline-offset: 2px;
+      border-radius: var(--radius-sm);
+    }
+
     /* Notion-style thin divider */
     .notion-divider {
       height: 1px;
@@ -176,6 +217,11 @@ import { TodoStore } from '../../store/todo.store';
 })
 export class TodoPageComponent {
   readonly store = inject(TodoStore);
+  readonly themeService = inject(ThemeService);
+
+  constructor() {
+    addIcons({ sunnyOutline, moonOutline });
+  }
 
   onTaskCreated(event: TaskCreatedEvent): void {
     this.store.addTask(event.title, event.categoryId, event.priority);
