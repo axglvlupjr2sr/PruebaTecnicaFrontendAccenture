@@ -1,5 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
-import { IonCheckbox, IonIcon } from '@ionic/angular/standalone';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { AlertController, IonCheckbox, IonIcon } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { trashOutline } from 'ionicons/icons';
 import { Task } from '../../../../core/models/task.model';
@@ -63,6 +63,8 @@ export type { Task };
   `,
 })
 export class TaskCardComponent {
+  private readonly alertCtrl = inject(AlertController);
+
   task = input.required<Task>();
   showPriorityBadge = input(false);
 
@@ -77,7 +79,19 @@ export class TaskCardComponent {
     this.toggled.emit(this.task().id);
   }
 
-  onDelete(): void {
-    this.deleted.emit(this.task().id);
+  async onDelete(): Promise<void> {
+    const alert = await this.alertCtrl.create({
+      header: 'Delete task',
+      message: `Are you sure you want to delete "${this.task().title}"?`,
+      buttons: [
+        { text: 'Cancel', role: 'cancel' },
+        {
+          text: 'Delete',
+          role: 'destructive',
+          handler: () => this.deleted.emit(this.task().id),
+        },
+      ],
+    });
+    await alert.present();
   }
 }
