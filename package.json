@@ -49,11 +49,11 @@
     "@types/jasmine": "~5.1.0",
     "@typescript-eslint/eslint-plugin": "^8.18.0",
     "@typescript-eslint/parser": "^8.18.0",
+    "cordova-android": "^15.0.0",
     "cordova-ios": "^8.0.1",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-ionic-keyboard": "^2.0.5",
     "cordova-plugin-ionic-webview": "^5.0.0",
-    "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "^2.4.2",
     "eslint": "^9.16.0",
     "eslint-plugin-import": "^2.29.1",
@@ -73,13 +73,11 @@
     "plugins": {
       "cordova-plugin-statusbar": {},
       "cordova-plugin-device": {},
-      "cordova-plugin-splashscreen": {},
       "cordova-plugin-ionic-webview": {},
       "cordova-plugin-ionic-keyboard": {}
     },
     "platforms": [
-      "ios",
-      "android"
+      "ios"
     ]
   }
 }
