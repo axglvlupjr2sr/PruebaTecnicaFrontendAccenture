@@ -5,7 +5,7 @@
 
 ---
 
-## 🎬 Demo
+## 🎬 Demo - En Releases encontrara el apk descargable 📦
 
 https://res.cloudinary.com/axginterprise/video/upload/v1774832551/bbabad5b-9304-4f6e-bad0-9138a1b6dfdb_hm8dm2.mp4
 
