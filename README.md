@@ -1,12 +1,19 @@
 # 📝 To-Do App — Prueba Técnica Frontend
 
-> Aplicación híbrida de gestión de tareas construida con **Ionic 8**, **Angular 20** y **Cordova 13**.  
+> Aplicación híbrida de gestión de tareas construida con **Ionic 8**, **Angular 20** y **Cordova**.  
 > Diseño Notion-inspired en blanco y negro. Estado reactivo con Signals nativos de Angular. Feature flag via Firebase Remote Config.
+
+---
+
+## 🎬 Demo
+
+https://res.cloudinary.com/axginterprise/video/upload/v1774832551/bbabad5b-9304-4f6e-bad0-9138a1b6dfdb_hm8dm2.mp4
 
 ---
 
 ## 📋 Tabla de Contenidos
 
+- [Demo](#-demo)
 - [Stack Tecnológico](#️-stack-tecnológico)
 - [Arquitectura](#️-arquitectura)
 - [Estructura del Proyecto](#-estructura-del-proyecto)
